@@ -3,8 +3,8 @@ import HomePage from '../components/pages/home'
 import PersonDetailPage from '../components/pages/person-detail'
 import PeoplePage from '../components/pages/people'
 
-export default createRouteBundle({
+export default createRouteBundle( {
   '/': HomePage,
   '/people': PeoplePage,
   '/people/:id': PersonDetailPage
-})
+} )

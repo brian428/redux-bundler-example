@@ -3,16 +3,16 @@
 export default {
   name: 'extra-args',
   // note that the store gets passed in here:
-  getExtraArgs: (store) => {
+  getExtraArgs: ( store ) => {
     return {
-      swapiFetch: (urlPath) =>
+      swapiFetch: ( urlPath ) =>
         // if your API requires an authentication token or whatnot
         // here would be a great place to select it from your store
         // and pass it along with the fetch. Then none of your individual
         // action creators need to worry about this.
-        fetch(`https://swapi.dev/api${urlPath}`)
-          .then(res => res.json())
-          .catch(err => {
+        fetch( `https://swapi.dev/api${ urlPath }` )
+          .then( res => res.json() )
+          .catch( err => {
             // if you wanted to, you could look for errors caused
             // by failed authentication to trigger something
             // else on the store here if it existed. Such as redirecting
@@ -23,7 +23,7 @@ export default {
             // can call `store.doWhatever()`
             // but for our purposes we'll just throw here
             throw err
-          })
+          } )
     }
   }
 }

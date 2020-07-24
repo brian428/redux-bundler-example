@@ -12,7 +12,7 @@ import { getConfiguredCache } from 'money-clip'
 // someone loading someone else's cached data.
 //
 // So, there are gotchas, but it sure is cool when you've got it all set up.
-export default getConfiguredCache({
+export default getConfiguredCache( {
   maxAge: 1000 * 60 * 60,
   version: 1
-})
+} )

@@ -10,31 +10,31 @@ export default {
       data: null
     }
     // this is just a normal redux reducer
-    return (state = initialState, {type, payload}) => {
-      if (type === 'FETCH_BASE_START') {
-        return Object.assign({}, state, {
+    return ( state = initialState, { type, payload } ) => {
+      if( type === 'FETCH_BASE_START' ) {
+        return Object.assign( {}, state, {
           loading: true
-        })
+        } )
       }
       // In the case of an error, we store
       // a timestamp of the error so we can
       // chose to automatically retry later
       // if we want
-      if (type === 'FETCH_BASE_ERROR') {
-        return Object.assign({}, state, {
+      if( type === 'FETCH_BASE_ERROR' ) {
+        return Object.assign( {}, state, {
           lastError: Date.now(),
           loading: false
-        })
+        } )
       }
       // we also store metadata about the fetch
       // along with the resulting data
-      if (type === 'FETCH_BASE_SUCCESS') {
-        return Object.assign({}, state, {
+      if( type === 'FETCH_BASE_SUCCESS' ) {
+        return Object.assign( {}, state, {
           lastFetch: Date.now(),
           loading: false,
           lastError: null,
-          data: Object.keys(payload).map(key => ({id: key, url: payload[key]}))
-        })
+          data: Object.keys( payload ).map( key => ({ id: key, url: payload[ key ] }) )
+        } )
       }
 
       return state
@@ -42,19 +42,20 @@ export default {
   },
   // see /src/bundles/extra-args to see how swapiFetch becomes
   // available here
-  doFetchBaseData: () => ({dispatch, swapiFetch}) => {
-    dispatch({type: 'FETCH_BASE_START'})
-    swapiFetch('/')
-      .then(payload => {
-        dispatch({type: 'FETCH_BASE_SUCCESS', payload})
-      })
-      .catch(error => {
-        dispatch({type: 'FETCH_BASE_ERROR', error})
-      })
+  doFetchBaseData: () => ( { dispatch, swapiFetch } ) => {
+    dispatch( { type: 'FETCH_BASE_START' } )
+    swapiFetch( '/' )
+      .then( payload => {
+        dispatch( { type: 'FETCH_BASE_SUCCESS', payload } )
+      } )
+      .catch( error => {
+        dispatch( { type: 'FETCH_BASE_ERROR', error } )
+      } )
   },
   // selector for the whole contents of the reducer
   // including metadata about fetches
   selectBaseDataRaw: state => state.baseData,
+
   // selector for just the actual data if we have it
   selectBaseData: state => state.baseData.data,
 
@@ -67,22 +68,22 @@ export default {
 
       let result = ''
 
-      if (data) {
+      if( data ) {
         result += 'Has data'
       } else {
         result += 'Does not have data'
       }
 
-      if (loading) {
+      if( loading ) {
         return result + ' and is fetching currently'
       }
 
-      if (lastError) {
-        return result + ` but had an error at ${lastError} and will retry after ~30 seconds`
+      if( lastError ) {
+        return result + ` but had an error at ${ lastError } and will retry after ~30 seconds`
       }
 
-      if (lastFetch) {
-        return result + ` that was fetched at ${lastFetch} but will updated a minute later`
+      if( lastFetch ) {
+        return result + ` that was fetched at ${ lastFetch } but will updated a minute later`
       }
     }
   ),
@@ -103,9 +104,9 @@ export default {
     // All this to say, we have a self-updating timestamp in our
     // redux state that we can use to see how long it's been.
     'selectAppTime',
-    (baseData, appTime) => {
+    ( baseData, appTime ) => {
       // never trigger another fetch if we're already fetching
-      if (baseData.loading) {
+      if( baseData.loading ) {
         return null
       }
 
@@ -117,27 +118,27 @@ export default {
       let shouldFetch = false
 
       // if we don't have data at all we definitely want to fetch
-      if (!baseData.data) {
+      if( !baseData.data ) {
         shouldFetch = true
       }
 
-      // was there an error last time we tried to fetch?
+        // was there an error last time we tried to fetch?
       // if it's been 15 seconds, give it another go...
-      else if (baseData.lastError) {
+      else if( baseData.lastError ) {
         const timePassed = appTime - baseData.lastError
-        if (timePassed > 15000) {
+        if( timePassed > 15000 ) {
           shouldFetch = true
         }
       }
 
-      // maybe our data is just stale?
-      // I've made this arbitrarily short at just 1 minute
-      // so you can see it working.
-      // Note that we don't wipe out existing data if we have
+        // maybe our data is just stale?
+        // I've made this arbitrarily short at just 1 minute
+        // so you can see it working.
+        // Note that we don't wipe out existing data if we have
       // it.
-      else if (baseData.lastFetch) {
+      else if( baseData.lastFetch ) {
         const timePassed = appTime - baseData.lastFetch
-        if (timePassed > 60000) {
+        if( timePassed > 60000 ) {
           shouldFetch = true
         }
       }
@@ -146,10 +147,10 @@ export default {
       // by using `{type: 'SOME_ACTION'}` or we can just specify the
       // name of the action creator function we want to run, and optionally
       // any args we want to pass to it.
-      if (shouldFetch) {
-        return {actionCreator: 'doFetchBaseData'}
+      if( shouldFetch ) {
+        return { actionCreator: 'doFetchBaseData' }
       }
     }
   ),
-  persistActions: ['FETCH_BASE_SUCCESS']
+  persistActions: [ 'FETCH_BASE_SUCCESS' ]
 }

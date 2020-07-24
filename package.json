@@ -3,24 +3,39 @@
   "version": "1.0.0",
   "description": "example showing how to use redux-bundler for data fetching",
   "main": "index.js",
-  "scripts": {
-    "start": "parcel ./src/index.html",
-    "build": "parcel build src/index.html --public-url / && cp ./_redirects ./dist/_redirects"
-  },
   "author": "Henrik Joreteg <henrik@joreteg.com> (joreteg.com)",
   "license": "MIT",
   "dependencies": {
-    "babel-preset-env": "1.7.0",
-    "babel-preset-preact": "2.0.0",
+    "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
     "internal-nav-helper": "3.1.0",
     "money-clip": "3.0.2",
     "parcel-bundler": "1.12.4",
-    "preact": "10.4.6",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "^3.4.1",
     "redux-bundler": "27.0.2",
-    "redux-bundler-preact": "2.0.1"
+    "redux-bundler-react": "^1.2.0"
   },
-  "prettier": {
-    "singleQuote": true,
-    "semi": false
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

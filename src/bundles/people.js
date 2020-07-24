@@ -23,35 +23,35 @@ export default {
       loading: false
     }
 
-    return (state = initialData, { type, payload }) => {
-      if (type === PeopleActions.FETCH_PEOPLE_START) {
-        return Object.assign({}, state, {
+    return ( state = initialData, { type, payload } ) => {
+      if( type === PeopleActions.FETCH_PEOPLE_START ) {
+        return Object.assign( {}, state, {
           loading: true
-        })
+        } )
       }
-      if (type === PeopleActions.FETCH_PEOPLE_SUCCESS) {
-        return Object.assign({}, state, {
+      if( type === PeopleActions.FETCH_PEOPLE_SUCCESS ) {
+        return Object.assign( {}, state, {
           loading: false,
           // we'll just extract an ID here and insert it as a property
           // on the data for this person.
           // Normally API will include an id attribute of some kind
           // for each object in the results, but not so for this API.
-          data: payload.results.map(person => {
-            const split = person.url.split('/')
-            const id = split[split.length - 2]
-            return Object.assign(person, { id })
-          })
-        })
+          data: payload.results.map( person => {
+            const split = person.url.split( '/' )
+            const id = split[ split.length - 2 ]
+            return Object.assign( person, { id } )
+          } )
+        } )
       }
 
       return state
     }
   },
-  doFetchPeople: () => ({ dispatch, swapiFetch }) => {
-    dispatch({ type: PeopleActions.FETCH_PEOPLE_START })
-    swapiFetch('/people').then(payload => {
-      dispatch({ type: PeopleActions.FETCH_PEOPLE_SUCCESS, payload })
-    })
+  doFetchPeople: () => ( { dispatch, swapiFetch } ) => {
+    dispatch( { type: PeopleActions.FETCH_PEOPLE_START } )
+    swapiFetch( '/people' ).then( payload => {
+      dispatch( { type: PeopleActions.FETCH_PEOPLE_SUCCESS, payload } )
+    } )
   },
   peopleBundle_selectPeopleRaw: state => state.people,
   selectPeopleRaw: state => state.people,
@@ -60,17 +60,17 @@ export default {
     'selectRouteParams',
     'selectPathname',
     'selectPeopleData',
-    (routeParams, pathname, peopleData) => {
-      if (!pathname.includes('/people') || !routeParams.id || !peopleData) {
+    ( routeParams, pathname, peopleData ) => {
+      if( !pathname.includes( '/people' ) || !routeParams.id || !peopleData ) {
         return null
       }
-      return peopleData.find(person => person.id === routeParams.id) || null
+      return peopleData.find( person => person.id === routeParams.id ) || null
     }
   ),
-  reactShouldFetchPeople: createSelector('selectPeopleRaw', peopleData => {
-    if (peopleData.loading || peopleData.data) {
+  reactShouldFetchPeople: createSelector( 'selectPeopleRaw', peopleData => {
+    if( peopleData.loading || peopleData.data ) {
       return false
     }
     return { actionCreator: 'doFetchPeople' }
-  })
+  } )
 }

@@ -9,6 +9,6 @@ export default composeBundles(
   routes,
   baseData,
   people,
-  createCacheBundle(cache.set),
+  createCacheBundle( { cacheFn: cache.set } ),
   extraArgs
 )
