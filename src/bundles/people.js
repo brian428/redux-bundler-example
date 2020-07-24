@@ -9,6 +9,12 @@ import { createSelector } from 'redux-bundler'
 // Main thing I'm wanting to highlight here is how
 // we grab the "active" person for the person detail view
 // see the `selectActivePerson` selector below
+
+export const PeopleActions = {
+  FETCH_PEOPLE_START: "FETCH_PEOPLE_START",
+  FETCH_PEOPLE_SUCCESS: "FETCH_PEOPLE_SUCCESS"
+};
+
 export default {
   name: 'people',
   getReducer: () => {
@@ -18,12 +24,12 @@ export default {
     }
 
     return (state = initialData, { type, payload }) => {
-      if (type === 'FETCH_PEOPLE_START') {
+      if (type === PeopleActions.FETCH_PEOPLE_START) {
         return Object.assign({}, state, {
           loading: true
         })
       }
-      if (type === 'FETCH_PEOPLE_SUCCESS') {
+      if (type === PeopleActions.FETCH_PEOPLE_SUCCESS) {
         return Object.assign({}, state, {
           loading: false,
           // we'll just extract an ID here and insert it as a property
@@ -42,11 +48,12 @@ export default {
     }
   },
   doFetchPeople: () => ({ dispatch, swapiFetch }) => {
-    dispatch({ type: 'FETCH_PEOPLE_START' })
+    dispatch({ type: PeopleActions.FETCH_PEOPLE_START })
     swapiFetch('/people').then(payload => {
-      dispatch({ type: 'FETCH_PEOPLE_SUCCESS', payload })
+      dispatch({ type: PeopleActions.FETCH_PEOPLE_SUCCESS, payload })
     })
   },
+  peopleBundle_selectPeopleRaw: state => state.people,
   selectPeopleRaw: state => state.people,
   selectPeopleData: state => state.people.data,
   selectActivePerson: createSelector(
