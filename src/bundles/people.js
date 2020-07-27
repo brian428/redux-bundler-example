@@ -12,7 +12,8 @@ import { createSelector } from 'redux-bundler'
 
 export const PeopleActions = {
   FETCH_PEOPLE_START: "FETCH_PEOPLE_START",
-  FETCH_PEOPLE_SUCCESS: "FETCH_PEOPLE_SUCCESS"
+  FETCH_PEOPLE_SUCCESS: "FETCH_PEOPLE_SUCCESS",
+  FETCH_PEOPLE_ERROR: "FETCH_PEOPLE_ERROR"
 };
 
 export default {
@@ -30,10 +31,17 @@ export default {
           loading: true
         } )
       }
+      if( type === PeopleActions.FETCH_PEOPLE_ERROR ) {
+        return Object.assign( {}, state, {
+          lastError: Date.now(),
+          loading: false
+        } )
+      }
       if( type === PeopleActions.FETCH_PEOPLE_SUCCESS ) {
         return Object.assign( {}, state, {
           loading: false,
           lastFetch: Date.now(),
+          lastError: null,
           // we'll just extract an ID here and insert it as a property
           // on the data for this person.
           // Normally API will include an id attribute of some kind
@@ -52,9 +60,13 @@ export default {
 
   doFetchPeople: () => ( { dispatch, swapiFetch } ) => {
     dispatch( { type: PeopleActions.FETCH_PEOPLE_START } )
-    swapiFetch( '/people' ).then( payload => {
-      dispatch( { type: PeopleActions.FETCH_PEOPLE_SUCCESS, payload } )
-    } )
+    swapiFetch( '/people' )
+      .then( payload => {
+        dispatch( { type: PeopleActions.FETCH_PEOPLE_SUCCESS, payload } )
+      } )
+      .catch( error => {
+        dispatch( { type: PeopleActions.FETCH_PEOPLE_ERROR, error } )
+      } )
   },
 
   peopleBundle_selectPeopleRaw: state => state.people,
@@ -102,11 +114,11 @@ export default {
       }
 
       if( lastError ) {
-        return result + ` but had an error at ${ new Date( lastError ).toLocaleString() } and will retry after ~30 seconds`
+        return result + ` but had an error at ${ new Date( lastError ).toLocaleString() }`
       }
 
       if( lastFetch ) {
-        return result + ` that was fetched at ${ new Date( lastFetch ).toLocaleString() } but will updated a minute later`
+        return result + ` that was fetched at ${ new Date( lastFetch ).toLocaleString() }`
       }
     }
   ),

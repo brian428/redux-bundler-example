@@ -87,7 +87,7 @@ const useStyles = makeStyles( ( theme ) => ( {
   },
 } ) );
 
-const Layout = ( { route, routeInfo, pathname, doUpdateUrl } ) => {
+const Layout = ( { route, routeInfo, routeMatcher, pathname, doUpdateUrl } ) => {
   const [ open, setOpen ] = React.useState( true );
   const classes = useStyles();
   const theme = useTheme();
@@ -104,10 +104,15 @@ const Layout = ( { route, routeInfo, pathname, doUpdateUrl } ) => {
   const handleDrawerOpen = () => setOpen( true );
   const handleDrawerClose = () => setOpen( false );
   const updateUrl = ( url ) => doUpdateUrl( url );
-  const isNavSelected = ( url, currentPath ) => currentPath === url || ( url.includes( "/people/" ) && currentPath.includes( "/people/" ) )
 
-  // Placing onClick on root element will automatically handle any anchor tag that changes the route. It bubbles up
-  // and update this handler will update the state (via the route bundle).
+  const isNavSelected = ( candidateUrl, currentRouteInfo, currentRouteMatcher ) => {
+    if( currentRouteInfo.url === candidateUrl ) return true;
+    else if( currentRouteInfo.pattern === currentRouteMatcher( candidateUrl )?.pattern ) return true;
+    else return false;
+  }
+
+  // Placing onClick() for getNavHelper() on root element will automatically handle any anchor tag that changes the route.
+  // Click event bubbles up and this handler will try to update the state and route (via the route bundle).
   return (
     <div className={ classes.root } onClick={ getNavHelper( doUpdateUrl ) }>
       <CssBaseline/>
@@ -150,7 +155,7 @@ const Layout = ( { route, routeInfo, pathname, doUpdateUrl } ) => {
         <List>
           { navItems.map( ( item ) => (
             <ListItem button key={ item.url } onClick={ () => updateUrl( item.url ) }
-                      selected={ isNavSelected( item.url, pathname ) }>
+                      selected={ isNavSelected( item.url, routeInfo, routeMatcher ) }>
               <ListItemText primary={ item.label }/>
             </ListItem>
           ) ) }
@@ -181,4 +186,4 @@ const Layout = ( { route, routeInfo, pathname, doUpdateUrl } ) => {
   )
 }
 
-export default connect( 'selectRoute', 'selectRouteInfo', 'selectPathname', 'doUpdateUrl', Layout )
+export default connect( 'selectRoute', 'selectRouteInfo', 'selectRouteMatcher', 'selectPathname', 'doUpdateUrl', Layout )

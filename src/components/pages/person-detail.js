@@ -39,7 +39,7 @@ const PersonDetailPage = ( { peopleDataStatus, routeParams, activePerson, doUpda
   const classes = useStyles();
   let content = <h3>No data yet</h3>
 
-  const humanize = ( str ) => {
+  const underscoreFormatToWords = ( str ) => {
     let i, frags = str.split( '_' );
     for( i = 0; i < frags.length; i++ ) {
       frags[ i ] = frags[ i ].charAt( 0 ).toUpperCase() + frags[ i ].slice( 1 );
@@ -65,8 +65,8 @@ const PersonDetailPage = ( { peopleDataStatus, routeParams, activePerson, doUpda
                   <TableBody>
                     { displayKeys.map( ( key ) => (
                       <TableRow key={ key }>
-                        <TableCell align="left">{ humanize( key ) }</TableCell>
-                        <TableCell align="left">{ humanize( activePerson[ key ] ) }</TableCell>
+                        <TableCell align="left">{ underscoreFormatToWords( key ) }</TableCell>
+                        <TableCell align="left">{ underscoreFormatToWords( activePerson[ key ] ) }</TableCell>
                       </TableRow>
                     ) ) }
                   </TableBody>
@@ -81,13 +81,14 @@ const PersonDetailPage = ( { peopleDataStatus, routeParams, activePerson, doUpda
 
           </Card>
         </Grid>
+
         <Grid item xs>
           <Card>
             <CardContent>
               <h3>Dynamically Fetched Data:</h3>
               <p>Source: https://swapi.co/api/</p>
               <p>Status: { peopleDataStatus }</p>
-              <p>result:</p>
+              <p>JSON result:</p>
               <pre><code>{ JSON.stringify( activePerson, null, 2 ) }</code></pre>
             </CardContent>
           </Card>

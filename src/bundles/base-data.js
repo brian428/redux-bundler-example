@@ -1,5 +1,11 @@
 import { createSelector } from 'redux-bundler'
 
+export const BaseDataActions = {
+  FETCH_BASE_START: "FETCH_BASE_START",
+  FETCH_BASE_ERROR: "FETCH_BASE_ERROR",
+  FETCH_BASE_SUCCESS: "FETCH_BASE_SUCCESS"
+};
+
 export default {
   name: 'baseData',
 
@@ -12,7 +18,7 @@ export default {
     }
     // this is just a normal redux reducer
     return ( state = initialState, { type, payload } ) => {
-      if( type === 'FETCH_BASE_START' ) {
+      if( type === BaseDataActions.FETCH_BASE_START ) {
         return Object.assign( {}, state, {
           loading: true
         } )
@@ -21,7 +27,7 @@ export default {
       // a timestamp of the error so we can
       // chose to automatically retry later
       // if we want
-      if( type === 'FETCH_BASE_ERROR' ) {
+      if( type === BaseDataActions.FETCH_BASE_ERROR ) {
         return Object.assign( {}, state, {
           lastError: Date.now(),
           loading: false
@@ -29,7 +35,7 @@ export default {
       }
       // we also store metadata about the fetch
       // along with the resulting data
-      if( type === 'FETCH_BASE_SUCCESS' ) {
+      if( type === BaseDataActions.FETCH_BASE_SUCCESS ) {
         return Object.assign( {}, state, {
           lastFetch: Date.now(),
           loading: false,
@@ -45,13 +51,13 @@ export default {
   // see /src/bundles/extra-args to see how swapiFetch becomes
   // available here
   doFetchBaseData: () => ( { dispatch, swapiFetch } ) => {
-    dispatch( { type: 'FETCH_BASE_START' } )
+    dispatch( { type: BaseDataActions.FETCH_BASE_START } )
     swapiFetch( '/' )
       .then( payload => {
-        dispatch( { type: 'FETCH_BASE_SUCCESS', payload } )
+        dispatch( { type: BaseDataActions.FETCH_BASE_SUCCESS, payload } )
       } )
       .catch( error => {
-        dispatch( { type: 'FETCH_BASE_ERROR', error } )
+        dispatch( { type: BaseDataActions.FETCH_BASE_ERROR, error } )
       } )
   },
 
@@ -156,5 +162,5 @@ export default {
     }
   ),
 
-  persistActions: [ 'FETCH_BASE_SUCCESS' ]
+  persistActions: [ BaseDataActions.FETCH_BASE_SUCCESS ]
 }
