@@ -11,7 +11,7 @@ const PeopleListPage = ( { peopleData, doUpdateUrl } ) => {
 
   if( peopleData ) {
     content = peopleData.map( person => (
-      <ListItem>
+      <ListItem key={ person.id }>
         <Link href={ `/people/${ person.id }` }>
           <ListItemText primary={ person.name }/>
         </Link>

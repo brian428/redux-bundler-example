@@ -1,35 +1,96 @@
 import React from "react";
+import clsx from 'clsx';
 import { connect } from 'redux-bundler-react'
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import MenuIcon from '@material-ui/icons/Menu';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Drawer from "@material-ui/core/Drawer";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import MailIcon from '@material-ui/icons/Mail';
+import Divider from "@material-ui/core/Divider";
+import ListSubheader from "@material-ui/core/ListSubheader";
 import { getNavHelper } from "internal-nav-helper";
+
+const drawerWidth = 240;
 
 /*
 The material-ui approach to styling may take some getting used to...
 https://material-ui.com/styles/basics/
 */
 const useStyles = makeStyles( ( theme ) => ({
-  root: {
+  title: {
     flexGrow: 1,
+  },
+  root: {
+    display: 'flex',
+  },
+  appBar: {
+    transition: theme.transitions.create( [ 'margin', 'width' ], {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    } ),
+  },
+  appBarShift: {
+    width: `calc(100% - ${ drawerWidth }px)`,
+    marginLeft: drawerWidth,
+    transition: theme.transitions.create( [ 'margin', 'width' ], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    } ),
   },
   menuButton: {
     marginRight: theme.spacing( 2 ),
   },
-  title: {
+  hide: {
+    display: 'none',
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+  },
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  drawerHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing( 0, 1 ),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: 'flex-end',
+  },
+  content: {
     flexGrow: 1,
+    padding: theme.spacing( 3 ),
+    transition: theme.transitions.create( 'margin', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen,
+    } ),
+    marginLeft: -drawerWidth,
+  },
+  contentShift: {
+    transition: theme.transitions.create( 'margin', {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen,
+    } ),
+    marginLeft: 0,
   },
 }) );
 
-const Layout = ( { doUpdateUrl, route, pathname } ) => {
-  const [ anchorEl, setAnchorEl ] = React.useState( null );
+const Layout = ( { route, routeInfo, pathname, doUpdateUrl } ) => {
+  const [ open, setOpen ] = React.useState( true );
   const classes = useStyles();
+  const theme = useTheme();
 
   const navItems = [
     { url: '/', label: 'Home' },
@@ -40,37 +101,82 @@ const Layout = ( { doUpdateUrl, route, pathname } ) => {
 
   const Page = route
 
-  const openMenu = ( event ) => setAnchorEl( event.currentTarget );
-  const closeMenu = () => setAnchorEl( null );
-
-  const updateUrl = ( url ) => {
-    closeMenu();
-    doUpdateUrl( url );
-  }
+  const handleDrawerOpen = () => setOpen( true );
+  const handleDrawerClose = () => setOpen( false );
+  const updateUrl = ( url ) => doUpdateUrl( url );
+  const isNavSelected = ( url, currentPath ) => currentPath === url || ( url.includes( "/people/" ) && currentPath.includes( "/people/" ) )
 
   return (
-    <main onClick={ getNavHelper(doUpdateUrl) }>
-      <AppBar position="static">
+    <div className={ classes.root } onClick={ getNavHelper(doUpdateUrl) }>
+      <CssBaseline/>
+
+      <AppBar
+        position="fixed"
+        className={ clsx( classes.appBar, { [ classes.appBarShift ]: open } ) }>
+
         <Toolbar>
-          <IconButton edge="start" className={ classes.menuButton } color="inherit" aria-label="menu" onClick={ openMenu }>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={ handleDrawerOpen }
+            edge="start"
+            className={ clsx( classes.menuButton, open && classes.hide ) }>
             <MenuIcon/>
           </IconButton>
-
-          <Menu id="app-menu" anchorEl={ anchorEl } keepMounted open={ Boolean( anchorEl ) } onClose={ closeMenu }>
-            { navItems.map( item => <MenuItem key={item.url} onClick={ () => updateUrl( item.url ) }>{ item.label }</MenuItem> ) }
-          </Menu>
-
-          <Typography variant="h6" className={ classes.title }>
-            Redux Bundler Example with Material-UI
+          <Typography variant="h6" noWrap>
+            Redux-Bundler Example with Material-UI
           </Typography>
-
         </Toolbar>
+
       </AppBar>
 
-      <Page/>
+      <Drawer
+        className={ classes.drawer }
+        variant="persistent"
+        anchor="left"
+        open={ open }
+        classes={ { paper: classes.drawerPaper } }>
 
-    </main>
+        <div className={ classes.drawerHeader }>
+          <IconButton onClick={ handleDrawerClose }>
+            { theme.direction === 'ltr' ? <ChevronLeftIcon/> : <ChevronRightIcon/> }
+          </IconButton>
+        </div>
+
+        <Divider/>
+
+        <List>
+          { navItems.map( ( item ) => (
+            <ListItem button key={ item.url } onClick={ () => updateUrl( item.url ) }
+                      selected={ isNavSelected( item.url, pathname ) }>
+              <ListItemText primary={ item.label }/>
+            </ListItem>
+          ) ) }
+        </List>
+
+        <Divider/>
+
+        <List>
+          <ListItem>
+            <ListSubheader component="div">Dummy Items with Icons</ListSubheader>
+          </ListItem>
+
+          { [ 'All mail', 'Fake Trash', 'Fake Spam' ].map( ( text, index ) => (
+            <ListItem button key={ text }>
+              <ListItemIcon>{ index % 2 === 0 ? <InboxIcon/> : <MailIcon/> }</ListItemIcon>
+              <ListItemText primary={ text }/>
+            </ListItem>
+          ) ) }
+        </List>
+
+      </Drawer>
+
+      <main className={ clsx( classes.content, { [ classes.contentShift ]: open } ) }>
+        <div className={ classes.drawerHeader }/>
+        <Page/>
+      </main>
+    </div>
   )
 }
 
-export default connect( 'selectRoute', 'selectPathname', 'doUpdateUrl', Layout )
+export default connect( 'selectRoute', 'selectRouteInfo', 'selectPathname', 'doUpdateUrl', Layout )

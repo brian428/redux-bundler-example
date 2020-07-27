@@ -47,11 +47,11 @@ const PersonDetailPage = ( { peopleDataStatus, routeParams, activePerson, doUpda
     return frags.join( ' ' );
   }
 
-  const displayKeys =  [ "height", "mass", "hair_color", "skin_color", "eye_color", "birth_year", "gender" ]
+  const displayKeys = [ "height", "mass", "hair_color", "skin_color", "eye_color", "birth_year", "gender" ]
 
   if( activePerson ) content = (
-    <div style={{ flexGrow: 1, marginTop: 30 }}>
-      <Grid container spacing={3}>
+    <div style={{ flexGrow: 1 }}>
+      <Grid container spacing={ 3 }>
         <Grid item xs>
           <Card className={ classes.card }>
 

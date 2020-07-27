@@ -5,7 +5,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Grid from "@material-ui/core/Grid";
 
 const HomePage = ( { baseDataStatus, baseData } ) => (
-  <div style={{ flexGrow: 1, marginTop: 30 }}>
+  <div style={{ flexGrow: 1 }}>
     <Grid container spacing={3}>
       <Grid item xs>
         <Card>
