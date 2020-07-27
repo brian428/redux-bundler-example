@@ -2,6 +2,7 @@ import { createSelector } from 'redux-bundler'
 
 export default {
   name: 'baseData',
+
   getReducer: () => {
     const initialState = {
       loading: false,
@@ -40,6 +41,7 @@ export default {
       return state
     }
   },
+
   // see /src/bundles/extra-args to see how swapiFetch becomes
   // available here
   doFetchBaseData: () => ( { dispatch, swapiFetch } ) => {
@@ -52,6 +54,7 @@ export default {
         dispatch( { type: 'FETCH_BASE_ERROR', error } )
       } )
   },
+
   // selector for the whole contents of the reducer
   // including metadata about fetches
   selectBaseDataRaw: state => state.baseData,
@@ -79,11 +82,11 @@ export default {
       }
 
       if( lastError ) {
-        return result + ` but had an error at ${ lastError } and will retry after ~30 seconds`
+        return result + ` but had an error at ${ new Date( lastError ).toLocaleString() } and will retry after ~30 seconds`
       }
 
       if( lastFetch ) {
-        return result + ` that was fetched at ${ lastFetch } but will updated a minute later`
+        return result + ` that was fetched at ${ new Date( lastFetch ).toLocaleString() } but will updated a minute later`
       }
     }
   ),
@@ -152,5 +155,6 @@ export default {
       }
     }
   ),
+
   persistActions: [ 'FETCH_BASE_SUCCESS' ]
 }

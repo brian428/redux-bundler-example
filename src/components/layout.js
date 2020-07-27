@@ -11,6 +11,10 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import { getNavHelper } from "internal-nav-helper";
 
+/*
+The material-ui approach to styling may take some getting used to...
+https://material-ui.com/styles/basics/
+*/
 const useStyles = makeStyles( ( theme ) => ({
   root: {
     flexGrow: 1,
@@ -36,13 +40,8 @@ const Layout = ( { doUpdateUrl, route, pathname } ) => {
 
   const Page = route
 
-  const openMenu = ( event ) => {
-    setAnchorEl( event.currentTarget );
-  };
-
-  const closeMenu = () => {
-    setAnchorEl( null );
-  };
+  const openMenu = ( event ) => setAnchorEl( event.currentTarget );
+  const closeMenu = () => setAnchorEl( null );
 
   const updateUrl = ( url ) => {
     closeMenu();
@@ -57,12 +56,7 @@ const Layout = ( { doUpdateUrl, route, pathname } ) => {
             <MenuIcon/>
           </IconButton>
 
-          <Menu
-            id="app-menu"
-            anchorEl={ anchorEl }
-            keepMounted
-            open={ Boolean( anchorEl ) }
-            onClose={ closeMenu }>
+          <Menu id="app-menu" anchorEl={ anchorEl } keepMounted open={ Boolean( anchorEl ) } onClose={ closeMenu }>
             { navItems.map( item => <MenuItem key={item.url} onClick={ () => updateUrl( item.url ) }>{ item.label }</MenuItem> ) }
           </Menu>
 
@@ -70,7 +64,6 @@ const Layout = ( { doUpdateUrl, route, pathname } ) => {
             Redux Bundler Example with Material-UI
           </Typography>
 
-          <Button color="inherit">Login</Button>
         </Toolbar>
       </AppBar>
 

@@ -17,6 +17,7 @@ export const PeopleActions = {
 
 export default {
   name: 'people',
+
   getReducer: () => {
     const initialData = {
       data: null,
@@ -32,6 +33,7 @@ export default {
       if( type === PeopleActions.FETCH_PEOPLE_SUCCESS ) {
         return Object.assign( {}, state, {
           loading: false,
+          lastFetch: Date.now(),
           // we'll just extract an ID here and insert it as a property
           // on the data for this person.
           // Normally API will include an id attribute of some kind
@@ -47,15 +49,20 @@ export default {
       return state
     }
   },
+
   doFetchPeople: () => ( { dispatch, swapiFetch } ) => {
     dispatch( { type: PeopleActions.FETCH_PEOPLE_START } )
     swapiFetch( '/people' ).then( payload => {
       dispatch( { type: PeopleActions.FETCH_PEOPLE_SUCCESS, payload } )
     } )
   },
+
   peopleBundle_selectPeopleRaw: state => state.people,
+
   selectPeopleRaw: state => state.people,
+
   selectPeopleData: state => state.people.data,
+
   selectActivePerson: createSelector(
     'selectRouteParams',
     'selectPathname',
@@ -67,10 +74,40 @@ export default {
       return peopleData.find( person => person.id === routeParams.id ) || null
     }
   ),
+
   reactShouldFetchPeople: createSelector( 'selectPeopleRaw', peopleData => {
     if( peopleData.loading || peopleData.data ) {
       return false
     }
     return { actionCreator: 'doFetchPeople' }
-  } )
+  } ),
+
+  // we'll extract a status string here, for display, just to show
+  // the type of information available about the data
+  selectPeopleDataStatus: createSelector(
+    'selectPeopleRaw',
+    peopleData => {
+      const { data, lastError, lastFetch, loading } = peopleData
+
+      let result = ''
+
+      if( data ) {
+        result += 'Has data'
+      } else {
+        result += 'Does not have data'
+      }
+
+      if( loading ) {
+        return result + ' and is fetching currently'
+      }
+
+      if( lastError ) {
+        return result + ` but had an error at ${ new Date( lastError ).toLocaleString() } and will retry after ~30 seconds`
+      }
+
+      if( lastFetch ) {
+        return result + ` that was fetched at ${ new Date( lastFetch ).toLocaleString() } but will updated a minute later`
+      }
+    }
+  ),
 }
