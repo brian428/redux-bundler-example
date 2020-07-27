@@ -27,7 +27,7 @@ const drawerWidth = 240;
 The material-ui approach to styling may take some getting used to...
 https://material-ui.com/styles/basics/
 */
-const useStyles = makeStyles( ( theme ) => ({
+const useStyles = makeStyles( ( theme ) => ( {
   title: {
     flexGrow: 1,
   },
@@ -85,7 +85,7 @@ const useStyles = makeStyles( ( theme ) => ({
     } ),
     marginLeft: 0,
   },
-}) );
+} ) );
 
 const Layout = ( { route, routeInfo, pathname, doUpdateUrl } ) => {
   const [ open, setOpen ] = React.useState( true );
@@ -106,8 +106,10 @@ const Layout = ( { route, routeInfo, pathname, doUpdateUrl } ) => {
   const updateUrl = ( url ) => doUpdateUrl( url );
   const isNavSelected = ( url, currentPath ) => currentPath === url || ( url.includes( "/people/" ) && currentPath.includes( "/people/" ) )
 
+  // Placing onClick on root element will automatically handle any anchor tag that changes the route. It bubbles up
+  // and update this handler will update the state (via the route bundle).
   return (
-    <div className={ classes.root } onClick={ getNavHelper(doUpdateUrl) }>
+    <div className={ classes.root } onClick={ getNavHelper( doUpdateUrl ) }>
       <CssBaseline/>
 
       <AppBar
