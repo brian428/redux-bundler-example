@@ -3,8 +3,14 @@ import HomePage from '../components/pages/home'
 import PersonDetailPage from '../components/pages/person-detail'
 import PeoplePage from '../components/pages/people'
 
+export const RoutePathMap = {
+  HOME: "/",
+  PEOPLE: "/people",
+  PERSON_DETAIL: "/people/:id"
+}
+
 export default createRouteBundle( {
-  '/': HomePage,
-  '/people': PeoplePage,
-  '/people/:id': PersonDetailPage
+  [ RoutePathMap.HOME ]: HomePage,
+  [ RoutePathMap.PEOPLE ]: PeoplePage,
+  [ RoutePathMap.PERSON_DETAIL ]: PersonDetailPage
 } )

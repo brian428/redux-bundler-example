@@ -13,6 +13,7 @@ import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import Grid from "@material-ui/core/Grid";
+import { RoutePathMap } from "../../bundles/routes";
 
 const useStyles = makeStyles( {
   card: {
@@ -32,12 +33,14 @@ const useStyles = makeStyles( {
   },
   tableContainer: {
     maxWidth: 400
+  },
+  noData: {
+    margin: 20
   }
 } );
 
-const PersonDetailPage = ( { peopleDataStatus, routeParams, activePerson, doUpdateUrl } ) => {
+const PersonDetailPage = ( { peopleDataStatus, routeParams, activePerson, doUpdateUrl, doRefreshPeople } ) => {
   const classes = useStyles();
-  let content = <h3>No data yet</h3>
 
   const underscoreFormatToWords = ( str ) => {
     let i, frags = str.split( '_' );
@@ -49,36 +52,44 @@ const PersonDetailPage = ( { peopleDataStatus, routeParams, activePerson, doUpda
 
   const displayKeys = [ "height", "mass", "hair_color", "skin_color", "eye_color", "birth_year", "gender" ]
 
-  if( activePerson ) content = (
+  let personContent = <h3 className={ classes.noData }>No data yet</h3>
+  if( activePerson ) personContent = (
+    <React.Fragment>
+      <CardContent>
+
+        <Typography className={ classes.title } color="textSecondary" gutterBottom>
+          { activePerson.name }
+        </Typography>
+
+        <TableContainer component={ Paper } className={ classes.tableContainer }>
+          <Table className={ classes.table } aria-label="simple table">
+            <TableBody>
+              { displayKeys.map( ( key ) => (
+                <TableRow key={ key }>
+                  <TableCell align="left">{ underscoreFormatToWords( key ) }</TableCell>
+                  <TableCell align="left">{ underscoreFormatToWords( activePerson[ key ] ) }</TableCell>
+                </TableRow>
+              ) ) }
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+      </CardContent>
+
+      <CardActions>
+        <Button size="small" onClick={ () => doUpdateUrl( RoutePathMap.PEOPLE ) }>Back to List</Button>
+        <Button size="small" onClick={ () => doRefreshPeople() }>Refresh People</Button>
+      </CardActions>
+
+    </React.Fragment>
+  )
+
+  return (
     <div style={{ flexGrow: 1 }}>
       <Grid container spacing={ 3 }>
         <Grid item xs>
           <Card className={ classes.card }>
-
-            <CardContent>
-              <Typography className={ classes.title } color="textSecondary" gutterBottom>
-                { activePerson.name }
-              </Typography>
-
-              <TableContainer component={ Paper } className={ classes.tableContainer }>
-                <Table className={ classes.table } aria-label="simple table">
-                  <TableBody>
-                    { displayKeys.map( ( key ) => (
-                      <TableRow key={ key }>
-                        <TableCell align="left">{ underscoreFormatToWords( key ) }</TableCell>
-                        <TableCell align="left">{ underscoreFormatToWords( activePerson[ key ] ) }</TableCell>
-                      </TableRow>
-                    ) ) }
-                  </TableBody>
-                </Table>
-              </TableContainer>
-
-            </CardContent>
-
-            <CardActions>
-              <Button size="small" onClick={ () => doUpdateUrl( "/people" ) }>Back to List</Button>
-            </CardActions>
-
+            { personContent }
           </Card>
         </Grid>
 
@@ -96,8 +107,6 @@ const PersonDetailPage = ( { peopleDataStatus, routeParams, activePerson, doUpda
       </Grid>
     </div>
   );
-
-  return content;
 }
 
 export default connect(
@@ -105,5 +114,6 @@ export default connect(
   'selectRouteParams',
   'selectActivePerson',
   'doUpdateUrl',
+  'doRefreshPeople',
   PersonDetailPage
 )

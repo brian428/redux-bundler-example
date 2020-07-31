@@ -20,6 +20,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import Divider from "@material-ui/core/Divider";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import { getNavHelper } from "internal-nav-helper";
+import { RoutePathMap } from "../bundles/routes";
 
 const drawerWidth = 240;
 
@@ -93,9 +94,9 @@ const Layout = ( { route, routeInfo, routeMatcher, pathname, doUpdateUrl } ) => 
   const theme = useTheme();
 
   const navItems = [
-    { url: '/', label: 'Home' },
-    { url: '/people', label: 'People List' },
-    { url: '/people/1', label: 'Person Detail' },
+    { url: RoutePathMap.HOME, label: 'Home' },
+    { url: RoutePathMap.PEOPLE, label: 'People List' },
+    { url: `${ RoutePathMap.PEOPLE }/1`, label: 'Person Detail' },
     { url: 'https://github.com/henrikjoreteg/redux-bundler', label: 'GitHub' }
   ]
 

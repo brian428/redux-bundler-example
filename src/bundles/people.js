@@ -1,4 +1,5 @@
 import { createSelector } from 'redux-bundler'
+import { RoutePathMap } from "./routes";
 
 // just being lazy here and only fetching people once
 // with no error handling. Again, in a real app you
@@ -13,7 +14,8 @@ import { createSelector } from 'redux-bundler'
 export const PeopleActions = {
   FETCH_PEOPLE_START: "FETCH_PEOPLE_START",
   FETCH_PEOPLE_SUCCESS: "FETCH_PEOPLE_SUCCESS",
-  FETCH_PEOPLE_ERROR: "FETCH_PEOPLE_ERROR"
+  FETCH_PEOPLE_ERROR: "FETCH_PEOPLE_ERROR",
+  REFRESH_PEOPLE: "REFRESH_PEOPLE"
 };
 
 const debugLog = true;
@@ -59,9 +61,20 @@ export default {
           } )
         } )
       }
+      if( type === PeopleActions.REFRESH_PEOPLE ) {
+        if( debugLog ) console.log( "people bundle: reducer handling REFRESH_PEOPLE" );
+        return Object.assign( {}, state, {
+          data: null
+        } )
+      }
 
       return state
     }
+  },
+
+  doRefreshPeople: () => ( { dispatch, swapiFetch } ) => {
+    if( debugLog ) console.log( "people bundle: doRefreshPeople()" );
+    dispatch( { type: PeopleActions.REFRESH_PEOPLE } );
   },
 
   doFetchPeople: () => ( { dispatch, swapiFetch } ) => {
@@ -91,7 +104,7 @@ export default {
     'selectPathname',
     'selectPeopleData',
     ( routeParams, pathname, peopleData ) => {
-      if( !pathname.includes( '/people' ) || !routeParams.id || !peopleData ) {
+      if( !pathname.includes( RoutePathMap.PEOPLE ) || !routeParams.id || !peopleData ) {
         return null
       }
       if( debugLog ) console.log( "people bundle: selectActivePerson()" );
@@ -107,8 +120,10 @@ export default {
   // calls to this will return false.
   reactShouldFetchPeople: createSelector(
     'selectPeopleRaw',
-    peopleData => {
-      if( peopleData.loading || peopleData.data ) return false;
+    'selectPathname',
+    ( peopleData, pathname ) => {
+      if( debugLog ) console.log( "people bundle: reactShouldFetchPeople() checking for `doFetchPeople`" );
+      if( !pathname.includes( RoutePathMap.PEOPLE ) || peopleData.loading || peopleData.data ) return false;
       if( debugLog ) console.log( "people bundle: reactShouldFetchPeople() triggering `doFetchPeople`" );
       return { actionCreator: 'doFetchPeople' };
     }
